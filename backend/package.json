@@ -1,0 +1,11 @@
+{
+  "name": "review-map-parser",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "parse:yandex": "node scripts/yandex-maps-parser.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.53.0"
+  }
+}

@@ -1,0 +1,26 @@
+.notification {
+  position: fixed;
+  z-index: 1100;
+  top: 24px;
+  left: 50%;
+  min-width: 260px;
+  border: 1px solid #b9dfc8;
+  border-radius: 12px;
+  padding: 14px 20px;
+  color: #176337;
+  background: #effaf3;
+  box-shadow: 0 12px 32px rgba(23, 32, 51, 0.12);
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.notification-enter-active,
+.notification-leave-active {
+  transition: all .3s ease;
+}
+
+.notification-enter-from,
+.notification-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px);
+}

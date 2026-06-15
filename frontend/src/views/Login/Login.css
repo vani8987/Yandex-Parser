@@ -1,0 +1,21 @@
+.login-page {
+  display: grid;
+  min-height: 100vh;
+  padding: 24px;
+  place-items: center;
+}
+
+.login-error {
+  border: 1px solid #f0c2c7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #b42335;
+  background: #fff3f4;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding: 16px;
+  }
+}

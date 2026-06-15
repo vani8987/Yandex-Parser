@@ -1,0 +1,24 @@
+.stat {
+  display: grid;
+  gap: 8px;
+  padding: 22px;
+  border: 1px solid #e1e6ef;
+  border-radius: 14px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.stat:hover {
+  border-color: #cbd4e3;
+  box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.stat span {
+  color: #687386;
+  font-size: 14px;
+}
+
+.stat strong {
+  color: #172033;
+  font-size: 28px;
+}

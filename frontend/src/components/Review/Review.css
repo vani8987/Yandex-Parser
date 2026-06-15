@@ -1,0 +1,43 @@
+.review {
+  padding: 24px;
+  border: 1px solid #e1e6ef;
+  border-radius: 14px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.review:hover {
+  border-color: #cbd4e3;
+  box-shadow: 0 8px 24px rgba(23, 32, 51, 0.06);
+}
+
+.review__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.review__header h3 {
+  color: #172033;
+  font-size: 16px;
+}
+
+.review__header time {
+  display: block;
+  margin-top: 5px;
+  color: #8992a3;
+  font-size: 13px;
+}
+
+.review__rating {
+  flex-shrink: 0;
+  color: #b56d00;
+  font-weight: 700;
+}
+
+.review > p {
+  margin-top: 18px;
+  color: #4e596d;
+  line-height: 1.65;
+}

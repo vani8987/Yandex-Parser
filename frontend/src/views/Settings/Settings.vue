@@ -46,8 +46,8 @@
         <Button :text="'Сохранить'" :type="'submit'" :disabled="!url.trim()" />
       </form>
 
-      <p v-if="organizationStore.error" class="request-message request-message--error">
-        {{ organizationStore.error }}
+      <p v-if="organizationStore.error || organizationStore.notification" :class="styleMessage">
+        {{ notificationMessage }}
       </p>
     </section>
 
@@ -199,6 +199,22 @@ const visiblePages = computed(() => {
   )
 })
 
+const styleMessage = computed(() => {
+    if (organizationStore.error && !organizationStore.notification) {
+      return 'request-message request-message--error'
+    }  
+
+    return 'request-message request-message--accomplishment'
+})
+
+const notificationMessage = computed(() => {
+    if (organizationStore.error && !organizationStore.notification) {
+      return organizationStore.error
+    }  
+
+    return organizationStore.notification
+})
+
 
 const validateYandexUrl = (value: string): string => {
   if (!value.trim()) {
@@ -310,12 +326,22 @@ const submitUrl = async (): Promise<boolean> => {
   if (isCreated && organizationStore.organisation) {
     selectedOrganizationId.value = organizationStore.organisation.id
     url.value = ''
-    await reviewsStore.getReviews(
+    reviewsStore.reviews = []
+ 
+    organizationStore.startPollingOrganization(
       organizationStore.organisation.id,
-      reviewsStore.currentPage,
-      reviewsStore.reviewsPerPage
+      async (organization) => {
+        organizationStore.organisation = organization
+
+        await reviewsStore.getReviews(
+          organization.id,
+          1,
+          reviewsStore.reviewsPerPage,
+        )
+
+        await organizationStore.getAllOrganisations()
+      },
     )
-    await organizationStore.getAllOrganisations()
   }
 
   return isCreated

@@ -13,10 +13,9 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-
     Route::post('/organizations', [OrganizationController::class, 'store']);
     Route::get('/organizations', [OrganizationController::class, 'getAll']);
+    Route::get('/organization/{id}', [OrganizationController::class, 'getOne']);
 
     Route::get('/organizations/{organization}/reviews', [ReviewsController::class, 'getAll']);
-
 });

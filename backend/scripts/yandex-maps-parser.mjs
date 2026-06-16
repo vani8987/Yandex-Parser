@@ -35,13 +35,23 @@ try {
     },
   })
 
+  await page.route('**/*', (route) => {
+    const type = route.request().resourceType()
+
+    if (['image', 'font', 'media'].includes(type)) {
+      return route.abort()
+    }
+
+    return route.continue()
+  })
+
   let navigationError
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await page.goto(reviewsUrl, {
         waitUntil: 'domcontentloaded',
-        timeout: 60000,
+        timeout: 30000,
       })
       navigationError = undefined
       break
@@ -72,7 +82,7 @@ try {
   let previousCount = 0
   let stableAttempts = 0
 
-  for (let attempt = 0; attempt < 120 && stableAttempts < 5; attempt += 1) {
+  for (let attempt = 0; attempt < 60 && stableAttempts < 3; attempt += 1) {
     const reviews = page.locator(reviewSelector)
     const count = await reviews.count()
 
@@ -101,7 +111,7 @@ try {
     })
 
     await page.mouse.wheel(0, 2500)
-    await page.waitForTimeout(400)
+    await page.waitForTimeout(250)
   }
 
   const data = await page.evaluate((selector) => {

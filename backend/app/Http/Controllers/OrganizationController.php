@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrganizationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
-use RuntimeException;
+use App\Jobs\RefreshOrganizationJob;
 use App\Models\Organization;
-use App\Services\YandexMapsParser;
-use App\Services\ReviewSyncService;
 
 class OrganizationController extends Controller
 {
@@ -23,47 +20,40 @@ class OrganizationController extends Controller
 
     public function store(
     StoreOrganizationRequest $request,
-    YandexMapsParser $parser,
-    ReviewSyncService $review
     ) {
         $url = $this->normalizeYandexUrl(
             $request->validated('yandex_url')
         );
-
-        try {
-            $data = $parser->parse($url);
-        } catch (RuntimeException $exception) {
-            report($exception);
-
-            throw ValidationException::withMessages([
-                'yandex_url' => 'Яндекс Карты временно недоступны. Повторите попытку позже.',
-            ]);
-        }
-
-        if (($data['name'] ?? '') === '' || empty($data['rating'])) {
-            throw ValidationException::withMessages([
-                'yandex_url' => 'Не удалось получить данные организации по этой ссылке.',
-            ]);
-        }
 
         $organization = Organization::firstOrCreate([
             'user_id' => $request->user()->id,
             'yandex_url' => $url,
         ]);
 
-        $organization->update([
-            'yandex_url' => $url,
-            'name' => $data['name'],
-            'rating' => $data['rating'],
-            'ratings_count' => $data['ratings_count'] ?? 0,
-            'reviews_count' => $data['reviews_count'] ?? 0,
-        ]);
+        $needRefresh =
+            $organization->wasRecentlyCreated
+            || $organization->updated_at->lte(now()->subHours(1));
 
-        $review->saveReviews($data['reviews'] ?? [], $organization);
+
+        if ($needRefresh) {
+            RefreshOrganizationJob::dispatch($organization);
+        }
 
         return response()->json([
             'organization' => $organization->fresh(),
+            'message' => 'Обновление организации запущено',
         ], $organization->wasRecentlyCreated ? 201 : 200);
+    }
+
+    public function getOne(Request $request, int $id)
+    {
+        $organization = $request->user()
+            ->organizations()
+            ->findOrFail($id);
+
+        return response()->json([
+            'organization' => $organization->fresh(),
+        ]);
     }
 
     public function getAll(Request $request)

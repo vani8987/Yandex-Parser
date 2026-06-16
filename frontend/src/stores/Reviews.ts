@@ -35,7 +35,7 @@ export const storeReviews = defineStore('reviews', () => {
     try {
       const response = await fetchGet<GetReviewsResponse>(
         loading,
-        `http://localhost:8000/api/organizations/${organizationId}/reviews?page=${page}&count=${reviewsPerPage}`,
+        `/api/organizations/${organizationId}/reviews?page=${page}&count=${reviewsPerPage}`,
       )
 
       reviews.value = response.reviews.data

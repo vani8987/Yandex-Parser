@@ -29,7 +29,7 @@ export const storeOrganization = defineStore('organization', () => {
       const token = getXsrfToken()
       const data = await fetchPost<CreateOrganizationData, CreateOrganizationResponse>(
         loading,
-        'http://localhost:8000/api/organizations',
+        '/api/organizations',
         { yandex_url: yandexUrl },
         token,
       )
@@ -50,7 +50,7 @@ export const storeOrganization = defineStore('organization', () => {
     try {
       const data = await fetchGet<GetAllOrganizationResponse>(
         loading,
-        'http://localhost:8000/api/organizations',
+        '/api/organizations',
       )
 
       allOrganisations.value = data.organizations

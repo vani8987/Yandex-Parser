@@ -27,7 +27,7 @@ export const AuthStore = defineStore('Auth', () => {
     error.value = null
 
     try {
-      await fetch('http://localhost:8000/sanctum/csrf-cookie', {
+      await fetch('/sanctum/csrf-cookie', {
         credentials: 'include',
       })
   
@@ -35,7 +35,7 @@ export const AuthStore = defineStore('Auth', () => {
 
       const data = await fetchPost<LoginData, LoginResponse>(
         loading,
-        'http://localhost:8000/api/login',
+        '/api/login',
         dataObj,
         token
       )
@@ -56,7 +56,7 @@ export const AuthStore = defineStore('Auth', () => {
 
       const data = await fetchPost<undefined, LogoutResponse>(
         loading,
-        'http://localhost:8000/api/logout',
+        '/api/logout',
         undefined,
         token,
       )
@@ -78,7 +78,7 @@ export const AuthStore = defineStore('Auth', () => {
 
   const me = async (): Promise<boolean> => {
     try {
-      const data = await fetchGet<LoginResponse>(loading, 'http://localhost:8000/api/me')
+      const data = await fetchGet<LoginResponse>(loading, '/api/me')
 
       user.value = data.user
 

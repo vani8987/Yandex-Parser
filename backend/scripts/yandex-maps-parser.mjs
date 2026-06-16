@@ -18,16 +18,33 @@ const reviewsUrl = parsedUrl.href.includes('/reviews')
   ? parsedUrl.href
   : `${parsedUrl.href.replace(/\/$/, '')}/reviews/`
 
-console.error('Final URL for navigation:', reviewsUrl)
-
 const browser = await chromium.launch({
   headless: true,
+  chromiumSandbox: false,
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--disable-extensions',
+    '--disable-background-networking',
+    '--disable-default-apps',
+    '--disable-sync',
+    '--disable-translate',
+    '--disable-features=site-per-process',
+    '--no-zygote',
+    '--single-process',
+    '--js-flags=--max-old-space-size=256',
+  ],
 })
 
 try {
   const page = await browser.newPage({
     locale: 'ru-RU',
-    viewport: { width: 1440, height: 1000 },
+    viewport: {
+      width: 400,
+      height: 300,
+    },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
       + '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
     extraHTTPHeaders: {
@@ -35,17 +52,10 @@ try {
     },
   })
 
-  await page.route('**/*', (route) => {
-    const type = route.request().resourceType()
-
-    if (['image', 'font', 'media'].includes(type)) {
-      return route.abort()
-    }
-
-    return route.continue()
-  })
-
   let navigationError
+
+  page.setDefaultTimeout(30000)
+  page.setDefaultNavigationTimeout(30000)
 
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
@@ -70,13 +80,30 @@ try {
       timeout: 30000,
     })
   } catch {
+    const title = await page.title().catch(() => '')
+    const preview = await page.locator('body').innerText({ timeout: 1000 }).catch(() => '')
+
+    await page.screenshot({
+      path: '/var/www/Yandex-Parser/backend/storage/app/yandex-debug.png',
+      fullPage: true,
+    }).catch(() => {})
+
+    await page.content()
+      .then((html) => {
+        return import('node:fs/promises').then((fs) =>
+          fs.writeFile('/var/www/Yandex-Parser/backend/storage/app/yandex-debug.html', html)
+        )
+      })
+      .catch(() => {})
+
     throw new Error(JSON.stringify({
       message: 'Карточка организации не загрузилась',
       url: page.url(),
-      title: await page.title(),
-      preview: (await page.locator('body').innerText()).slice(0, 500),
+      title,
+      preview: preview.slice(0, 500),
     }))
   }
+  
 
   const reviewSelector = '[role="listitem"].business-reviews-card-view__review'
   let previousCount = 0
@@ -155,6 +182,7 @@ try {
       reviews,
     }
   }, reviewSelector)
+
 
   process.stdout.write(JSON.stringify(data))
 } finally {

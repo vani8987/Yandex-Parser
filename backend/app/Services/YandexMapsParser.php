@@ -73,8 +73,7 @@ class YandexMapsParser
             $env
         );
         
-        $process->setTimeout(180);
-        $process->mustRun();
+        $process->setTimeout(300);
 
         $process->run();
 

@@ -78,7 +78,7 @@ class YandexMapsParser
         $process->setTimeout(300);
 
         $process->run();
-
+        
         if (! $process->isSuccessful()) {
             throw new RuntimeException($process->getErrorOutput());
         }

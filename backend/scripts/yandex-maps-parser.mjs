@@ -20,7 +20,7 @@ const reviewsUrl = parsedUrl.href.includes('/reviews')
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const inProduction = process.env.PLAYWRIGHT_SERVER_MODE === 'true'
+const inProduction = ['true', '1'].includes(process.env.PLAYWRIGHT_SERVER_MODE)
 
 const args = inProduction ? 
     [
@@ -42,7 +42,7 @@ const args = inProduction ?
       '--disable-setuid-sandbox',
       '--disable-dev-shm-usage',
     ]
-
+    
 const browser = await chromium.launch({
   headless: true,
   chromiumSandbox: false,

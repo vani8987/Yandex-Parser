@@ -26,6 +26,7 @@ const browser = await chromium.launch({
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
   ]
 })
 
@@ -33,8 +34,8 @@ try {
   const page = await browser.newPage({
     locale: 'ru-RU',
     viewport: {
-      width: 1280,
-      height: 720,
+      width: 400,
+      height: 300,
     },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
       + '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
@@ -51,7 +52,7 @@ try {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await page.goto(reviewsUrl, {
-        waitUntil: 'networkidle',
+        waitUntil: 'domcontentloaded',
         timeout: 60000,
       })
       navigationError = undefined
@@ -67,7 +68,7 @@ try {
   }
 
   try {
-    await page.waitForSelector('.card-title-view__title-link, h1', {
+    await page.waitForSelector('[itemprop="reviewBody"], .business-reviews-card-view__review', {
       timeout: 30000,
     })
   } catch {
@@ -94,13 +95,12 @@ try {
       preview: preview.slice(0, 500),
     }))
   }
-  
 
   const reviewSelector = '[role="listitem"].business-reviews-card-view__review'
   let previousCount = 0
   let stableAttempts = 0
 
-  for (let attempt = 0; attempt < 60 && stableAttempts < 3; attempt += 1) {
+  for (let attempt = 0; attempt < 40 && stableAttempts < 3; attempt += 1) {
     const reviews = page.locator(reviewSelector)
     const count = await reviews.count()
 
@@ -132,11 +132,13 @@ try {
     await page.waitForTimeout(250)
   }
 
-  const expandButtons = page.locator('.business-review-view__expand')
+  await page.evaluate(() => {
+    document
+      .querySelectorAll('.business-review-view__expand[aria-label="Ещё"]')
+      .forEach(el => el.click())
+  })
 
-  for (let i = 0; i < await expandButtons.count(); i += 1) {
-    await expandButtons.nth(i).click().catch(() => {})
-  }
+  await delay(500)
 
   const data = await page.evaluate((selector) => {
     const text = (element) => element?.textContent?.trim() ?? ''

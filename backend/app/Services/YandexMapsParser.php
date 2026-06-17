@@ -42,6 +42,7 @@ class YandexMapsParser
     }
 
     public function parse(string $url): array
+
     {
         $temporaryDirectory = storage_path('app/playwright');
         File::ensureDirectoryExists($temporaryDirectory);
@@ -59,7 +60,9 @@ class YandexMapsParser
             'TMP' => $temporaryDirectory,
             'TMPDIR' => $temporaryDirectory,
             'PATH' => getenv('PATH'),
+            'PLAYWRIGHT_SERVER_MODE' => env('PLAYWRIGHT_SERVER_MODE', 'false'),
         ]);
+
 
         $process = new Process(
             [

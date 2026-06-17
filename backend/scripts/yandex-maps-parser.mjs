@@ -20,14 +20,33 @@ const reviewsUrl = parsedUrl.href.includes('/reviews')
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
+const inProduction = process.env.PLAYWRIGHT_SERVER_MODE === 'true'
+
+const args = inProduction ? 
+    [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-gpu',
+      '--disable-extensions',
+      '--disable-background-networking',
+      '--disable-default-apps',
+      '--disable-sync',
+      '--disable-translate',
+      '--disable-features=site-per-process',
+      '--no-zygote',
+      '--single-process',
+      '--js-flags=--max-old-space-size=256',
+    ] : [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+    ]
+
 const browser = await chromium.launch({
   headless: true,
   chromiumSandbox: false,
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-  ]
+  args
 })
 
 try {

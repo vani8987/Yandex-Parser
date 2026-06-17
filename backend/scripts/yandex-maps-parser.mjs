@@ -18,32 +18,23 @@ const reviewsUrl = parsedUrl.href.includes('/reviews')
   ? parsedUrl.href
   : `${parsedUrl.href.replace(/\/$/, '')}/reviews/`
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 const browser = await chromium.launch({
   headless: true,
   chromiumSandbox: false,
   args: [
     '--no-sandbox',
     '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--disable-extensions',
-    '--disable-background-networking',
-    '--disable-default-apps',
-    '--disable-sync',
-    '--disable-translate',
-    '--disable-features=site-per-process',
-    '--no-zygote',
-    '--single-process',
-    '--js-flags=--max-old-space-size=256',
-  ],
+  ]
 })
 
 try {
   const page = await browser.newPage({
     locale: 'ru-RU',
     viewport: {
-      width: 400,
-      height: 300,
+      width: 1280,
+      height: 720,
     },
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
       + '(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
@@ -60,14 +51,14 @@ try {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     try {
       await page.goto(reviewsUrl, {
-        waitUntil: 'domcontentloaded',
-        timeout: 30000,
+        waitUntil: 'networkidle',
+        timeout: 60000,
       })
       navigationError = undefined
       break
     } catch (error) {
       navigationError = error
-      await page.waitForTimeout(1000)
+      await delay(1000)
     }
   }
 
@@ -139,6 +130,12 @@ try {
 
     await page.mouse.wheel(0, 2500)
     await page.waitForTimeout(250)
+  }
+
+  const expandButtons = page.locator('.business-review-view__expand')
+
+  for (let i = 0; i < await expandButtons.count(); i += 1) {
+    await expandButtons.nth(i).click().catch(() => {})
   }
 
   const data = await page.evaluate((selector) => {

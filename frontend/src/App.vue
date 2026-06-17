@@ -11,8 +11,5 @@ import Notification from '@/components/Notification/Notification.vue'
 import Loader from '@/components/Loader/Loader.vue'
 import { AuthStore } from '@/stores/Auth'
 
-
 const authStore = AuthStore()
-
-
 </script>

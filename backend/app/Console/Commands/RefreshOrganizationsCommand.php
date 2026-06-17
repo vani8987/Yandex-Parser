@@ -2,15 +2,12 @@
 
 namespace App\Console\Commands;
 
-
+use App\Models\Organization;
+use App\Services\ReviewSyncService;
+use App\Services\YandexMapsParser;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
-
-use App\Services\ReviewSyncService;
-use App\Services\YandexMapsParser;
-
-use App\Models\Organization;
 
 #[Signature('organizations:refresh')]
 #[Description('Refresh organizations data from Yandex Maps')]
@@ -22,8 +19,7 @@ class RefreshOrganizationsCommand extends Command
     public function handle(
         ReviewSyncService $reviewSyncService,
         YandexMapsParser $parser
-    )
-    {
+    ) {
         $organizations = Organization::all();
 
         foreach ($organizations as $organization) {

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrganizationRequest;
-use Illuminate\Http\Request;
 use App\Jobs\RefreshOrganizationJob;
 use App\Models\Organization;
+use Illuminate\Http\Request;
 
 class OrganizationController extends Controller
 {
@@ -19,7 +19,7 @@ class OrganizationController extends Controller
     }
 
     public function store(
-    StoreOrganizationRequest $request,
+        StoreOrganizationRequest $request,
     ) {
         $url = $this->normalizeYandexUrl(
             $request->validated('yandex_url')
@@ -33,7 +33,6 @@ class OrganizationController extends Controller
         $needRefresh =
             $organization->wasRecentlyCreated
             || $organization->updated_at->lte(now()->subHours(1));
-
 
         if ($needRefresh) {
             RefreshOrganizationJob::dispatch($organization);
@@ -61,8 +60,7 @@ class OrganizationController extends Controller
         $organizations = $request->user()
             ->organizations()
             ->get()
-            ->unique(fn (Organization $organization) =>
-                $this->normalizeYandexUrl($organization->yandex_url)
+            ->unique(fn (Organization $organization) => $this->normalizeYandexUrl($organization->yandex_url)
             )
             ->values();
 

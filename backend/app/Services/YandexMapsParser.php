@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use IntlDateFormatter;
 use RuntimeException;
-use Illuminate\Support\Facades\File;
 use Symfony\Component\Process\Process;
-
 
 class YandexMapsParser
 {
@@ -77,7 +76,7 @@ class YandexMapsParser
 
         $process->run();
 
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             throw new RuntimeException($process->getErrorOutput());
         }
 
@@ -89,12 +88,13 @@ class YandexMapsParser
 
         $data = json_decode($output, true);
 
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             throw new RuntimeException('Парсер Яндекс Карт вернул некорректный JSON.');
         }
 
         $data['reviews'] = array_map(function (array $review): array {
             $review['review_date'] = $this->normalizeDate($review['review_date']);
+
             return $review;
         }, $data['reviews'] ?? []);
 

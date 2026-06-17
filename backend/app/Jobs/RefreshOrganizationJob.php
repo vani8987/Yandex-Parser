@@ -15,18 +15,18 @@ class RefreshOrganizationJob implements ShouldQueue
 
     public function __construct(
         public Organization $organization
-    ) {
-    }
+    ) {}
 
     public function handle(
-    YandexMapsParser $parser,
-    ReviewSyncService $review
+        YandexMapsParser $parser,
+        ReviewSyncService $review
     ): void {
 
         try {
             $data = $parser->parse($this->organization->yandex_url);
         } catch (RuntimeException $exception) {
             report($exception);
+
             return;
         }
 

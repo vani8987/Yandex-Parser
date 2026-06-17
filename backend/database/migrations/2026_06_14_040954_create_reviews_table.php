@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organization_id')
-            ->constrained('organizations')
+                ->constrained('organizations')
                 ->cascadeOnDelete();
             $table->string('author');
             $table->tinyInteger('rating');
             $table->text('text')->nullable();
             $table->dateTime('review_date');
             $table->timestamps();
-            
+
         });
     }
 

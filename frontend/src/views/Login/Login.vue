@@ -1,14 +1,14 @@
 <template>
   <div>
     <Loader v-if="authStore.loading" />
-  
+
     <main class="login-page">
       <Form @submit.prevent="handleSubmit">
         <template #header>
           <h1>Вход</h1>
           <p>Войдите в аккаунт для работы с отзывами.</p>
         </template>
-  
+
         <Input
           :label="'Email'"
           :type="'email'"
@@ -18,7 +18,7 @@
           @input="handleEmailInput"
           v-model="formLogin.email"
         />
-  
+
         <Input
           :label="'Пароль'"
           :type="'password'"
@@ -30,7 +30,7 @@
         />
 
         <p v-if="authStore.error" class="login-error">{{ authStore.error }}</p>
-  
+
         <Button :text="'Войти'" :type="'submit'" />
       </Form>
     </main>
@@ -51,7 +51,7 @@ const router = useRouter()
 
 interface loginFormDate {
   password: string
-  email: string,
+  email: string
 }
 
 const formLogin = ref<loginFormDate>({
@@ -107,7 +107,6 @@ const handleSubmit = async () => {
     await router.push('/settings')
   }
 }
-
 </script>
 
 <style src="./Login.css"></style>

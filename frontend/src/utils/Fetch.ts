@@ -5,7 +5,7 @@ interface ErrorResponse {
 }
 
 async function getResponseError(response: Response): Promise<string> {
-  const data = await response.json().catch(() => null) as ErrorResponse | null
+  const data = (await response.json().catch(() => null)) as ErrorResponse | null
 
   return data?.message ?? `Ошибка запроса: ${response.status}`
 }
@@ -44,8 +44,8 @@ export async function fetchPost<TBody = undefined, TResponse = void>(
       method: 'POST',
       credentials: 'include',
       headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
         ...(xsrfToken && {
           'X-XSRF-TOKEN': xsrfToken,
         }),

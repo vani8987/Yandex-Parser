@@ -16,7 +16,7 @@
 
 .notification-enter-active,
 .notification-leave-active {
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
 .notification-enter-from,

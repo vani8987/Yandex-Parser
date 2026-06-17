@@ -30,15 +30,10 @@ export const AuthStore = defineStore('Auth', () => {
       await fetch('/sanctum/csrf-cookie', {
         credentials: 'include',
       })
-  
+
       const token = getXsrfToken()
 
-      const data = await fetchPost<LoginData, LoginResponse>(
-        loading,
-        '/api/login',
-        dataObj,
-        token
-      )
+      const data = await fetchPost<LoginData, LoginResponse>(loading, '/api/login', dataObj, token)
 
       user.value = data.user
 

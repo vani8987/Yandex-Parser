@@ -10,8 +10,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-use App\Models\Organization;
-
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden([
     'password',
@@ -38,7 +36,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function organizations() {
+    public function organizations()
+    {
         return $this->hasMany(Organization::class);
     }
 }

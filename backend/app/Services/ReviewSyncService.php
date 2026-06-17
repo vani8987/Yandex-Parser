@@ -4,7 +4,8 @@ namespace App\Services;
 
 use App\Models\Organization;
 
-class ReviewSyncService {
+class ReviewSyncService
+{
     public function saveReviews(
         array $reviews,
         Organization $organization
@@ -16,7 +17,7 @@ class ReviewSyncService {
                     'author' => $review['author'],
                     'review_date' => $review['review_date'],
                 ],
-                [   
+                [
                     'text' => $review['text'],
                     'rating' => $review['rating'],
                 ]

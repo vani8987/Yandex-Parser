@@ -28,7 +28,7 @@ export const storeReviews = defineStore('reviews', () => {
   const getReviews = async (
     organizationId: number,
     page = 1,
-    reviewsPerPage = 50
+    reviewsPerPage = 50,
   ): Promise<boolean> => {
     error.value = null
 

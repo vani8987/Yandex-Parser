@@ -18,20 +18,20 @@
       </div>
 
       <label class="organization-select">
-      <span>Сохранённые организации</span>
+        <span>Сохранённые организации</span>
 
-      <select v-model="selectedOrganizationId" @change="handleOrganizationSelect">
-        <option selected value="">Выберите организацию</option>
+        <select v-model="selectedOrganizationId" @change="handleOrganizationSelect">
+          <option selected value="">Выберите организацию</option>
 
-        <option
-          v-for="organization in organizationStore.allOrganisations"
-          :key="organization.id"
-          :value="organization.id"
-        >
-          {{ organization.name }}
-        </option>
-      </select>
-    </label>
+          <option
+            v-for="organization in organizationStore.allOrganisations"
+            :key="organization.id"
+            :value="organization.id"
+          >
+            {{ organization.name }}
+          </option>
+        </select>
+      </label>
 
       <form class="organization-form" @submit.prevent="submitUrl">
         <Input
@@ -58,7 +58,9 @@
           <h2>{{ organizationStore.organisation.name }}</h2>
         </div>
 
-        <a :href="organizationStore.organisation.yandex_url" target="_blank">Открыть на Яндекс Картах</a>
+        <a :href="organizationStore.organisation.yandex_url" target="_blank"
+          >Открыть на Яндекс Картах</a
+        >
       </div>
 
       <div class="stats">
@@ -72,9 +74,7 @@
       <div class="reviews-section__heading">
         <div>
           <h2>Отзывы</h2>
-          <p>
-            Показано {{ reviewsStore.reviews.length }} из {{ reviewsStore.total }} отзывов
-          </p>
+          <p>Показано {{ reviewsStore.reviews.length }} из {{ reviewsStore.total }} отзывов</p>
         </div>
 
         <div class="reviews-section__controls">
@@ -109,13 +109,7 @@
           −3
         </button>
 
-        <button
-          type="button"
-          :disabled="isFirstPage"
-          @click="undoBtn"
-        >
-          Назад
-        </button>
+        <button type="button" :disabled="isFirstPage" @click="undoBtn">Назад</button>
 
         <button
           v-for="page in visiblePages"
@@ -127,13 +121,7 @@
           {{ page }}
         </button>
 
-        <button
-          type="button"
-          :disabled="isLastPage"
-          @click="nextBtn"
-        >
-          Вперёд
-        </button>
+        <button type="button" :disabled="isLastPage" @click="nextBtn">Вперёд</button>
 
         <button
           type="button"
@@ -150,7 +138,9 @@
     </p>
 
     <section
-      v-else-if="organizationStore.organisation && !reviewsStore.loading && !reviewsStore.reviews.length"
+      v-else-if="
+        organizationStore.organisation && !reviewsStore.loading && !reviewsStore.reviews.length
+      "
       class="reviews-empty"
     >
       <h2>Отзывов нет</h2>
@@ -185,36 +175,30 @@ const urlError = ref<string>('')
 const selectedOrganizationId = ref<number | ''>('')
 
 const isFirstPage = computed(() => reviewsStore.currentPage === 1)
-const isLastPage = computed(
-  () => reviewsStore.currentPage === reviewsStore.lastPage,
-)
+const isLastPage = computed(() => reviewsStore.currentPage === reviewsStore.lastPage)
 
 const visiblePages = computed(() => {
   const firstPage = Math.max(1, reviewsStore.currentPage - 1)
   const lastPage = Math.min(reviewsStore.lastPage, reviewsStore.currentPage + 1)
 
-  return Array.from(
-    { length: lastPage - firstPage + 1 },
-    (_, index) => firstPage + index,
-  )
+  return Array.from({ length: lastPage - firstPage + 1 }, (_, index) => firstPage + index)
 })
 
 const styleMessage = computed(() => {
-    if (organizationStore.error && !organizationStore.notification) {
-      return 'request-message request-message--error'
-    }  
+  if (organizationStore.error && !organizationStore.notification) {
+    return 'request-message request-message--error'
+  }
 
-    return 'request-message request-message--accomplishment'
+  return 'request-message request-message--accomplishment'
 })
 
 const notificationMessage = computed(() => {
-    if (organizationStore.error && !organizationStore.notification) {
-      return organizationStore.error
-    }  
+  if (organizationStore.error && !organizationStore.notification) {
+    return organizationStore.error
+  }
 
-    return organizationStore.notification
+  return organizationStore.notification
 })
-
 
 const validateYandexUrl = (value: string): string => {
   if (!value.trim()) {
@@ -267,10 +251,7 @@ const changePage = async (page: number) => {
     return
   }
 
-  const targetPage = Math.min(
-    reviewsStore.lastPage,
-    Math.max(1, page),
-  )
+  const targetPage = Math.min(reviewsStore.lastPage, Math.max(1, page))
 
   if (targetPage === reviewsStore.currentPage) {
     return
@@ -279,7 +260,7 @@ const changePage = async (page: number) => {
   await reviewsStore.getReviews(
     organizationStore.organisation.id,
     targetPage,
-    reviewsStore.reviewsPerPage
+    reviewsStore.reviewsPerPage,
   )
 }
 
@@ -288,11 +269,7 @@ const handleReviewsPerPageChange = async () => {
     return
   }
 
-  await reviewsStore.getReviews(
-    organizationStore.organisation.id,
-    1,
-    reviewsStore.reviewsPerPage,
-  )
+  await reviewsStore.getReviews(organizationStore.organisation.id, 1, reviewsStore.reviewsPerPage)
 }
 
 const undoBtn = async () => {
@@ -304,10 +281,7 @@ const undoBtn = async () => {
 }
 
 const nextBtn = async () => {
-  if (
-    !organizationStore.organisation
-    || isLastPage.value
-  ) {
+  if (!organizationStore.organisation || isLastPage.value) {
     return
   }
 
@@ -327,17 +301,13 @@ const submitUrl = async (): Promise<boolean> => {
     selectedOrganizationId.value = organizationStore.organisation.id
     url.value = ''
     reviewsStore.reviews = []
- 
+
     organizationStore.startPollingOrganization(
       organizationStore.organisation.id,
       async (organization) => {
         organizationStore.organisation = organization
 
-        await reviewsStore.getReviews(
-          organization.id,
-          1,
-          reviewsStore.reviewsPerPage,
-        )
+        await reviewsStore.getReviews(organization.id, 1, reviewsStore.reviewsPerPage)
 
         await organizationStore.getAllOrganisations()
       },

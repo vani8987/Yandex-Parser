@@ -1,11 +1,11 @@
 <template>
   <label class="input-field">
     <span>{{ props.label }}</span>
-    <input 
+    <input
       v-model="model"
-      :type="props.type" 
-      :autocomplete="props.autocomplete" 
-      :placeholder="props.placeholder" 
+      :type="props.type"
+      :autocomplete="props.autocomplete"
+      :placeholder="props.placeholder"
     />
 
     <small v-if="props.error">{{ props.error }}</small>
@@ -13,11 +13,9 @@
 </template>
 
 <script setup lang="ts">
-
 const model = defineModel<string>({
   default: '',
 })
-
 
 const props = defineProps<{
   label: string

@@ -45,7 +45,7 @@ export const storeOrganization = defineStore('organization', () => {
         return null
       }
 
-      const data = await response.json() as GetOneOrganizationResponse
+      const data = (await response.json()) as GetOneOrganizationResponse
 
       organisation.value = data.organization
 
@@ -117,10 +117,7 @@ export const storeOrganization = defineStore('organization', () => {
     error.value = null
 
     try {
-      const data = await fetchGet<GetAllOrganizationResponse>(
-        loading,
-        '/api/organizations',
-      )
+      const data = await fetchGet<GetAllOrganizationResponse>(loading, '/api/organizations')
 
       allOrganisations.value = data.organizations
 

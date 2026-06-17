@@ -71,7 +71,7 @@ class YandexMapsParser
             base_path(),
             $env
         );
-        
+
         $process->setTimeout(300);
 
         $process->run();

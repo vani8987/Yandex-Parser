@@ -30,7 +30,7 @@ class RefreshOrganizationJob implements ShouldQueue
             return;
         }
 
-        if (($data['name'] ?? '') === '' || empty($data['rating'])) {     
+        if (($data['name'] ?? '') === '' || empty($data['rating'])) {
             return;
         }
 
